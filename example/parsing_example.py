@@ -47,7 +47,8 @@ run_config, geom_dict = util.detector_configuration(detector)
     The following should be the read-out level information
     Since this package does not provide event parser, here, in the example we borrow the truth information
 '''
-pckt_event_ids = EvtParser.packet_to_eventid(assn, G4_segments)
+ifspill = run_config['ifspill']
+pckt_event_ids = EvtParser.packet_to_eventid(assn, G4_segments, ifspill)
 event_ids = np.unique(pckt_event_ids[pckt_event_ids != -1]) 
 t0_grp = EvtParser.get_t0(packets)
 
@@ -57,7 +58,7 @@ for i_ev, evt_id in enumerate(event_ids):
     pckt_mask = pckt_event_ids == evt_id
     packets_ev = packets[pckt_mask]
     assn_ev = assn[pckt_mask]
-    t0 = t0_grp[i_ev][0]
+    t0 = t0_grp[i_ev]
     
     ## x is the drift; y is the vertical direction; z is horizontal axis in pixel plane
     ## you can choose drift model by adding this to arguement "drift_model=1"
