@@ -2,7 +2,7 @@
 
 import setuptools
 
-VER = "0.0.4"
+VER = "0.0.5"
 
 setuptools.setup(
     name="LarpixParser",
