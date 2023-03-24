@@ -57,6 +57,8 @@ def get_run_config(run_config_path, use_builtin = False):
 
     run_config['lifetime'] = run_yaml['lifetime'] #us
 
+    run_config['ifspill'] = run_yaml['ifspill']
+
     return run_config
 
 def configuration_keywords():

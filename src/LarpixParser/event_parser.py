@@ -1,14 +1,24 @@
 import numpy as np
+from sklearn.cluster import DBSCAN
 
 def get_t0(packets):
 
-    pckts_t0 = packets[packets['packet_type'] == 7] # external trigger # by default larnd-sim fills external trigger for each event
-    n_grps = len(np.unique(pckts_t0['io_group']))
+    t0 = []
+    pckts_t0 = packets[packets['packet_type'] == 7]['timestamp'] # external trigger # by default larnd-sim fills external trigger for each event
 
-    return pckts_t0['timestamp'].reshape(-1, n_grps)
+    pckts_t0_db = pckts_t0.reshape(-1,1)
+
+    db = DBSCAN(eps=50, min_samples=2).fit(pckts_t0_db)
+    labels = db.labels_
+    n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+    for i_ct in range(n_clusters_):
+        ct_mask = labels == i_ct
+        t0.append(np.min(pckts_t0[ct_mask]))
+
+    return np.array(t0)
 
 
-def packet_to_eventid(assn, tracks):
+def packet_to_eventid(assn, tracks, ifspill):
     '''
     Assoiciate packet to eventID.
     
@@ -27,9 +37,13 @@ def packet_to_eventid(assn, tracks):
         `len(event_ids)` equals to `len(packets)`
     '''
     track_ids = assn['track_ids'].max(axis=-1)
-   
+
     event_ids = np.full_like(track_ids, -1, dtype=int)
     mask = track_ids != -1
-    event_ids[mask] = tracks['eventID'][track_ids[mask]]
 
+    if not ifspill:
+        event_ids[mask] = tracks['eventID'][track_ids[mask]]
+    if ifspill:
+        event_ids[mask] = tracks['spillID'][track_ids[mask]]
+        
     return event_ids
