@@ -1,5 +1,6 @@
 # Argon properties
 temperature: 87.17 # K
+lar_density: 1.38 # g/cm^3
 #e_field: 0.50 # kV/cm
 e_field: 0.050 # kV/mm
 lifetime: 2.2e+3 # us
@@ -20,7 +21,7 @@ birks_kb: 0.0486 # g/cm2/MeV Amoruso, et al NIM A 523 (2004) 275
 #: Average energy expended per ion pair in LAr in :math:`MeV` from Phys. Rev. A 10, 1452
 W_ion: 23.6e-6
 
-: Front-end gain in :math:`mV/ke-`
+#: Front-end gain in :math:`mV/ke-`
 GAIN: 4 # mV / (1e3 * e)
 #: Common-mode voltage in :math:`mV`
 V_CM: 288 # mV
@@ -39,10 +40,10 @@ reponse_bin_size: 0.04434 # cm
 time_padding: 190 # us
 time_window: 189.1 # us
 tpc_offsets: # cm
-  - [33.5, -21.8236, 33.5]
-  - [33.5, -21.8236, -33.5]
-  - [-33.5, -21.8236, 33.5]
-  - [-33.5, -21.8236, -33.5]
+  - [33.5, 42, 33.5]
+  - [33.5, 42, -33.5]
+  - [-33.5, 42, 33.5]
+  - [-33.5, 42, -33.5]
 tile_map:
   - [[7,5,3,1],[8,6,4,2]]
   - [[16,14,12,10],[15,13,11,9]]
@@ -52,4 +53,6 @@ module_to_io_groups:
   3: [5, 6]
   4: [7, 8]
 
+ifspill: True
+spill_spacing: 1.2e6          # microseconds
 
