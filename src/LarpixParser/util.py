@@ -58,6 +58,7 @@ def get_run_config(run_config_path, use_builtin = False):
     run_config['lifetime'] = run_yaml['lifetime'] #us
 
     run_config['ifspill'] = run_yaml['ifspill']
+    run_config['beam_duration'] = run_yaml['beam_duration'] #us
 
     return run_config
 

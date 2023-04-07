@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.cluster import DBSCAN
 
+# still need to check what to do with non-beam simulation
+
 def get_t0(packets):
 
     t0 = []
@@ -17,6 +19,9 @@ def get_t0(packets):
 
     return np.array(t0)
 
+def get_t0_spill(vertices, run_config):
+    dt_beam = run_config['beam_duration']
+    return (np.unique(vertices['t_spill']) + dt_beam *0.5) * 10
 
 def packet_to_eventid(assn, tracks, ifspill):
     '''

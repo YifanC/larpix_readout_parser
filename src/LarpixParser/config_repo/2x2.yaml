@@ -55,4 +55,5 @@ module_to_io_groups:
 
 ifspill: True
 spill_spacing: 1.2e6          # microseconds
+beam_duration: 10             # microseconds
 
