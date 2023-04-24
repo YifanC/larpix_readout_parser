@@ -33,9 +33,8 @@ def get_pixel_plane_position(packets_arr, geom_dict, run_config):
 
 def get_t_drift(t0, packets_arr, run_config):
 
-    t = packets_arr['timestamp'].astype(float)
-    t_drift = t - t0 # ticks, 0.1us
-    t_drift *= run_config['CLOCK_CYCLE']
+    t = packets_arr['timestamp'].astype(float) * run_config['CLOCK_CYCLE']
+    t_drift = t - t0 # us
 
     return t_drift
 
