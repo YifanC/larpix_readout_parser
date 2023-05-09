@@ -22,7 +22,7 @@ def get_t0(packets, run_config):
 
     return t0_ev
 
-def get_t0_event(vertices, run_config, time_parser='t_event'):
+def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_event'):
     try:
         dt_window = run_config['beam_duration']
     except:
@@ -30,11 +30,16 @@ def get_t0_event(vertices, run_config, time_parser='t_event'):
         print("Found no 'beam_duration' in the configuration file")
 
     if time_parser in vertices.dtype.names and not (np.all(vertices[time_parser]) == 0):
-        t0_ev = (np.unique(vertices[time_parser]) + dt_window *0.5)
+        uniq_ev, counts = np.unique(vertices['eventID'], return_counts=True)
+        idx = np.cumsum(counts) - 1
+        t0_ev = np.take(vertices[time_parser], idx) + dt_window *0.5
     else:
         raise ValueError("True event time is not given!")
 
     return t0_ev
+
+def get_eventid(vertices, event_parser='eventID'):
+    return np.unique(vertices[event_parser])
 
 def packet_to_eventid(assn, tracks, event_parser='eventID'):
     '''
