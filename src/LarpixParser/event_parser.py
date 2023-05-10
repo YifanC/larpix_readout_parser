@@ -22,7 +22,7 @@ def get_t0(packets, run_config):
 
     return t0_ev
 
-def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_event'):
+def get_t0_event_unpadded(vertices, run_config, event_parser='eventID', time_parser='t_event'):
     try:
         dt_window = run_config['beam_duration']
     except:
@@ -30,18 +30,48 @@ def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_ev
         print("Found no 'beam_duration' in the configuration file")
 
     if time_parser in vertices.dtype.names and not (np.all(vertices[time_parser]) == 0):
-        uniq_ev, counts = np.unique(vertices['eventID'], return_counts=True)
+        uniq_ev, counts = np.unique(vertices[event_parser], return_counts=True)
         idx = np.cumsum(counts) - 1
         t0_ev = np.take(vertices[time_parser], idx) + dt_window *0.5
+        if len(uniq_ev) != len(np.unique(vertices[time_parser])):
+            raise ValueError("The number of 'eventID' and 't_event' do not match!")
     else:
         raise ValueError("True event time is not given!")
 
     return t0_ev
 
-def get_eventid(vertices, event_parser='eventID'):
-    return np.unique(vertices[event_parser])
+def get_eventid_unpadded(vertices, event_parser='eventID'):
+    evt_ids = np.unique(vertices[event_parser])
+    if np.min(evt_ids) < 0:
+        raise ValueError("Minimum eventID is negative!")
+    elif np.min(evt_ids) == 0:
+        return evt_ids
+    else:
+        if np.min(evt_ids) > len(evt_ids):
+            return evt_ids % np.min(evt_ids)
+        else:
+            return evt_ids - np.min(evt_ids)
 
-def packet_to_eventid(assn, tracks, event_parser='eventID'):
+def get_eventid(vertices, event_parser='eventID'):
+    evt_ids = get_eventid_unpadded(vertices, event_parser)
+    if len(evt_ids) == (np.max(evt_ids)+1):
+        return evt_ids
+    else:
+        return np.arange(0, np.max(evt_ids)+1, 1)
+
+def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_event'):
+    max_evtid = np.max(vertices[event_parser]) + 1
+    t0_ev = np.full(max_evtid, -1)
+
+    evt_id_unpadded = get_eventid_unpadded(vertices, event_parser)
+    t0_unpadded = get_t0_event_unpadded(vertices, run_config, event_parser, time_parser)
+
+    np.put(t0_ev, evt_id_unpadded, t0_unpadded)
+
+    return t0_ev
+
+
+def packet_to_eventid(assn, tracks, vertices, event_parser='eventID'):
     '''
     Assoiciate packet to eventID.
     
@@ -64,6 +94,18 @@ def packet_to_eventid(assn, tracks, event_parser='eventID'):
     event_ids = np.full_like(track_ids, -1, dtype=int)
     mask = track_ids != -1
 
-    event_ids[mask] = tracks[event_parser][track_ids[mask]]
+    event_ids[mask] = tracks[event_parser][track_ids[mask]] 
+
+    evt_ids = np.unique(vertices[event_parser])
+    if np.min(evt_ids) < 0:
+        raise ValueError("Minimum eventID is negative!")
+    elif np.min(evt_ids) == 0:
+        event_ids[mask] = tracks[event_parser][track_ids[mask]]
+    else:
+        if np.min(evt_ids) > len(evt_ids):
+            event_ids[mask] = tracks[event_parser][track_ids[mask]] % np.min(evt_ids)
+        else:
+            event_ids[mask] = tracks[event_parser][track_ids[mask]] - np.min(evt_ids)
         
     return event_ids
+

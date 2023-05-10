@@ -7,13 +7,13 @@ from LarpixParser import hit_parser as HitParser
 from LarpixParser import util as util
 
 switch_xz = True
-detector = "ndlar"
+detector = "2x2"
 
 f = h5py.File('../example_data/ndlar_ev20_larndsim.h5', 'r')
 packets = f['packets'] # readout
-G4_segments = f['tracks'] # Geant4 truth
+segs = f['tracks'] # Geant4 truth
 assn = f['mc_packets_assn'] # G4-readout association
-
+vtx = f['vertices'] # true interaction information
 
 '''
     Loading LArPix geometry and run configuration
@@ -47,10 +47,9 @@ run_config, geom_dict = util.detector_configuration(detector)
     The following should be the read-out level information
     Since this package does not provide event parser, here, in the example we borrow the truth information
 '''
-ifspill = run_config['ifspill']
-pckt_event_ids = EvtParser.packet_to_eventid(assn, G4_segments, ifspill)
+pckt_event_ids = EvtParser.packet_to_eventid(assn, segs, vtx)
 event_ids = np.unique(pckt_event_ids[pckt_event_ids != -1]) 
-t0_grp = EvtParser.get_t0(packets)
+t0_grp = EvtParser.get_t0_event(vtx, run_config)
 
 for i_ev, evt_id in enumerate(event_ids):
 
@@ -58,7 +57,7 @@ for i_ev, evt_id in enumerate(event_ids):
     pckt_mask = pckt_event_ids == evt_id
     packets_ev = packets[pckt_mask]
     assn_ev = assn[pckt_mask]
-    t0 = t0_grp[i_ev]
+    t0 = t0_grp[evt_id]
     
     ## x is the drift; y is the vertical direction; z is horizontal axis in pixel plane
     ## you can choose drift model by adding this to arguement "drift_model=1"
@@ -77,6 +76,6 @@ for i_ev, evt_id in enumerate(event_ids):
     # segID is a list of segments which contribute to the packet readout marked by the unique identification of true segments (tracks) per file
     # frac is the charge contribution per segment
     # pdg is the corresponding pdg code of the segment
-    x,y,z,dQ,segID,frac,pdg = HitParser.hit_parser_charge_n_truth(t0, packets_ev, geom_dict, run_config, assn_ev, G4_segments, switch_xz)
+    x,y,z,dQ,segID,frac,pdg = HitParser.hit_parser_charge_n_truth(t0, packets_ev, geom_dict, run_config, assn_ev, segs, switch_xz)
 
 
