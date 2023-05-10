@@ -47,10 +47,10 @@ def get_eventid_unpadded(vertices, event_parser='eventID'):
     elif np.min(evt_ids) == 0:
         return evt_ids
     else:
-        if np.min(evt_ids) > len(evt_ids):
+        if np.min(evt_ids) >= len(evt_ids):
             return evt_ids % np.min(evt_ids)
         else:
-            return evt_ids - np.min(evt_ids)
+            return evt_ids 
 
 def get_eventid(vertices, event_parser='eventID'):
     evt_ids = get_eventid_unpadded(vertices, event_parser)
@@ -102,10 +102,10 @@ def packet_to_eventid(assn, tracks, vertices, event_parser='eventID'):
     elif np.min(evt_ids) == 0:
         event_ids[mask] = tracks[event_parser][track_ids[mask]]
     else:
-        if np.min(evt_ids) > len(evt_ids):
+        if np.min(evt_ids) >= len(evt_ids):
             event_ids[mask] = tracks[event_parser][track_ids[mask]] % np.min(evt_ids)
         else:
-            event_ids[mask] = tracks[event_parser][track_ids[mask]] - np.min(evt_ids)
+            event_ids[mask] = tracks[event_parser][track_ids[mask]] 
         
     return event_ids
 
