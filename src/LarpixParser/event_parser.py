@@ -29,7 +29,7 @@ def get_t0_event_unpadded(vertices, run_config, event_parser='eventID', time_par
         dt_window = 0
         print("Found no 'beam_duration' in the configuration file")
 
-    if time_parser in vertices.dtype.names and not (np.all(vertices[time_parser]) == 0):
+    if time_parser in vertices.dtype.names and not (np.all(vertices[time_parser] == 0)):
         uniq_ev, counts = np.unique(vertices[event_parser], return_counts=True)
         idx = np.cumsum(counts) - 1
         t0_ev = np.take(vertices[time_parser], idx) + dt_window *0.5
