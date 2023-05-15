@@ -42,28 +42,23 @@ def get_t0_event_unpadded(vertices, run_config, event_parser='eventID', time_par
 
 def get_eventid_unpadded(vertices, event_parser='eventID'):
     evt_ids = np.unique(vertices[event_parser])
-    if np.min(evt_ids) < 0:
-        raise ValueError("Minimum eventID is negative!")
-    elif np.min(evt_ids) == 0:
-        return evt_ids
-    else:
-        if np.min(evt_ids) >= len(evt_ids):
-            return evt_ids % np.min(evt_ids)
-        else:
-            return evt_ids 
+    return evt_ids
 
 def get_eventid(vertices, event_parser='eventID'):
     evt_ids = get_eventid_unpadded(vertices, event_parser)
-    if len(evt_ids) == (np.max(evt_ids)+1):
+    if len(evt_ids) == (np.max(evt_ids) - np.min(evt_ids) + 1):
         return evt_ids
     else:
-        return np.arange(0, np.max(evt_ids)+1, 1)
+        return np.arange(np.min(evt_ids), np.max(evt_ids)+1, 1)
 
 def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_event'):
-    max_evtid = np.max(vertices[event_parser]) + 1
+    max_evtid = np.max(vertices[event_parser]) - np.min(vertices[event_parser]) + 1
     t0_ev = np.full(max_evtid, -1)
 
     evt_id_unpadded = get_eventid_unpadded(vertices, event_parser)
+    if np.min(evt_id_unpadded) >= len(evt_id_unpadded):
+        evt_id_unpadded = get_eventid_unpadded(vertices, event_parser) % np.min(evt_id_unpadded)
+
     t0_unpadded = get_t0_event_unpadded(vertices, run_config, event_parser, time_parser)
 
     np.put(t0_ev, evt_id_unpadded, t0_unpadded)
@@ -95,17 +90,6 @@ def packet_to_eventid(assn, tracks, vertices, event_parser='eventID'):
     mask = track_ids != -1
 
     event_ids[mask] = tracks[event_parser][track_ids[mask]] 
-
-    evt_ids = np.unique(vertices[event_parser])
-    if np.min(evt_ids) < 0:
-        raise ValueError("Minimum eventID is negative!")
-    elif np.min(evt_ids) == 0:
-        event_ids[mask] = tracks[event_parser][track_ids[mask]]
-    else:
-        if np.min(evt_ids) >= len(evt_ids):
-            event_ids[mask] = tracks[event_parser][track_ids[mask]] % np.min(evt_ids)
-        else:
-            event_ids[mask] = tracks[event_parser][track_ids[mask]] 
         
     return event_ids
 
