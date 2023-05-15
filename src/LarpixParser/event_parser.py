@@ -66,7 +66,7 @@ def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_ev
     return t0_ev
 
 
-def packet_to_eventid(assn, tracks, vertices, event_parser='eventID'):
+def packet_to_eventid(assn, tracks, event_parser='eventID'):
     '''
     Assoiciate packet to eventID.
     
