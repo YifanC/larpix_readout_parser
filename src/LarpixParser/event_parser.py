@@ -22,7 +22,7 @@ def get_t0(packets, run_config):
 
     return t0_ev
 
-def get_t0_event_unpadded(vertices, run_config, event_parser='eventID', time_parser='t_event'):
+def get_t0_event_unpadded(vertices, run_config, event_parser='event_id', time_parser='t_event'):
     try:
         dt_window = run_config['beam_duration']
     except:
@@ -34,24 +34,24 @@ def get_t0_event_unpadded(vertices, run_config, event_parser='eventID', time_par
         idx = np.cumsum(counts) - 1
         t0_ev = np.take(vertices[time_parser], idx) + dt_window *0.5
         if len(uniq_ev) != len(np.unique(vertices[time_parser])):
-            raise ValueError("The number of 'eventID' and 't_event' do not match!")
+            raise ValueError("The number of 'event_id' and 't_event' do not match!")
     else:
         raise ValueError("True event time is not given!")
 
     return t0_ev
 
-def get_eventid_unpadded(vertices, event_parser='eventID'):
+def get_eventid_unpadded(vertices, event_parser='event_id'):
     evt_ids = np.unique(vertices[event_parser])
     return evt_ids
 
-def get_eventid(vertices, event_parser='eventID'):
+def get_eventid(vertices, event_parser='event_id'):
     evt_ids = get_eventid_unpadded(vertices, event_parser)
     if len(evt_ids) == (np.max(evt_ids) - np.min(evt_ids) + 1):
         return evt_ids
     else:
         return np.arange(np.min(evt_ids), np.max(evt_ids)+1, 1)
 
-def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_event'):
+def get_t0_event(vertices, run_config, event_parser='event_id', time_parser='t_event'):
     max_evtid = np.max(vertices[event_parser]) - np.min(vertices[event_parser]) + 1
     t0_ev = np.full(max_evtid, -1)
 
@@ -66,9 +66,9 @@ def get_t0_event(vertices, run_config, event_parser='eventID', time_parser='t_ev
     return t0_ev
 
 
-def packet_to_eventid(assn, tracks, event_parser='eventID'):
+def packet_to_eventid(assn, tracks, event_parser='event_id'):
     '''
-    Assoiciate packet to eventID.
+    Assoiciate packet to event_id.
     
     Arguments
     ---------
@@ -81,7 +81,7 @@ def packet_to_eventid(assn, tracks, event_parser='eventID'):
     Returns
     -------
     event_ids: ndarray (N,)
-        array of eventID.
+        array of event_id.
         `len(event_ids)` equals to `len(packets)`
     '''
     track_ids = assn['track_ids'].max(axis=-1)
