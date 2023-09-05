@@ -32,5 +32,6 @@ def get_calo_true(packets_arr, assn, g4_seg):
     contribution_mask = assn['track_ids'] == -1
     track_id = np.ma.array(assn['track_ids'], mask = contribution_mask)
     packet_charge_frac = np.ma.array(assn['fraction'], mask = contribution_mask)
-    pdgcode = np.ma.array(g4_seg['pdgId'][track_id], mask = contribution_mask)
-    return track_id, packet_charge_frac, pdgcode
+    pdgcode = np.ma.array(g4_seg['pdg_id'][track_id], mask = contribution_mask)
+    dE = np.ma.array(g4_seg['dE'][track_id], mask = contribution_mask)
+    return track_id, packet_charge_frac, pdgcode, dE
