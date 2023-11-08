@@ -88,6 +88,12 @@ def detector_configuration(detector):
         run_config = get_run_config(run_config_path)
         geom_dict = load_geom_dict(geom_path)
 
+    elif detector == "2x2_only":
+        run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2_only.yaml')
+        geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
+        run_config = get_run_config(run_config_path)
+        geom_dict = load_geom_dict(geom_path)
+
     elif detector == "ndlar":
         run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/ndlar-module.yaml')
         geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-3.0.40.pkl')
