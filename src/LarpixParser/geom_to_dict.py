@@ -10,7 +10,7 @@ def rotate_pixel(pixel_pos, tile_orientation):
     return pixel_pos[0]*tile_orientation[2], pixel_pos[1]*tile_orientation[1]
 
 def larpix_layout_to_dict(larpix_layout_name, geom_repo="builtin",
-                          save_dict=True, dict_out=None):
+                          save_dict=True, dict_out=None, unique_id_key=False):
     '''
         ------------- Note----------------
         The function asssumes each module has the same io configuration, which is currently used in the ndlar/2x2 simulation.
@@ -21,6 +21,7 @@ def larpix_layout_to_dict(larpix_layout_name, geom_repo="builtin",
         geom_repo: the repository contains the larpix layout per module; by default, this function will use the geom repos that ship with the package, installed alongside the libraries
         save_dict: wether to save the dictionary to a pickle file; by default, if one choose not to save it, this funtion will the dictionary
         dict_out: the path to the output pickle file which contains the pixel readout dictionary
+        unique_id_key: bool, True to use unique_id as the key in the geometry dict, False to use the normal (io_group, io_channel, chip_id, channel_id) tuple.
     '''
 
     if geom_repo == "builtin":
@@ -67,8 +68,11 @@ def larpix_layout_to_dict(larpix_layout_name, geom_repo="builtin",
             y += tile_positions[tile][1]
             z = tile_positions[tile][0]
             direction = tile_orientations[tile][0]
-
-            geometry[(io_group, io_channel, chip, channel)] = np.array([x, y, z, direction])
+            if unique_id_key:
+                unique_id = ((io_group * 256 + io_channel) * 256 + chip) * 64 + channel
+                geometry[unique_id] = np.array([x, y, z, direction])
+            else:
+                geometry[(io_group, io_channel, chip, channel)] = np.array([x, y, z, direction])
 
     # need to figure out what to do in case one doesn't have writting rights
     if save_dict:
