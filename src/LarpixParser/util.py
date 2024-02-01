@@ -63,7 +63,7 @@ def get_run_config(run_config_path, use_builtin = False):
     return run_config
 
 def configuration_keywords():
-    return ['module0','2x2', '2x2_only', '2x2_MR4','ndlar']
+    return ['module0','2x2', '2x2_only', '2x2_MR4', '2x2_MR45', 'ndlar']
 
 def detector_configuration(detector):
 
@@ -84,6 +84,12 @@ def detector_configuration(detector):
 
     elif detector == "2x2_MR4":
         run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2_MR4.yaml')
+        geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
+        run_config = get_run_config(run_config_path)
+        geom_dict = load_geom_dict(geom_path)
+
+    elif detector == "2x2_MR45":
+        run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2_geo_v4.yaml')
         geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
         run_config = get_run_config(run_config_path)
         geom_dict = load_geom_dict(geom_path)
