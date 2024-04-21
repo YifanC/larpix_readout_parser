@@ -9,15 +9,24 @@ def get_pixel_plane_position(packets_arr, geom_dict, run_config):
 
     tpc_centers = run_config['tpc_offsets']
     nr_iogroup_module = run_config['nr_iogroup_module']
+    try:
+        geom_dict_idx = run_config['geom_dict_idx']
+        modvar = True
+    except:
+        modvar = False
+        pass
     
     x, y, z, direction = [], [], [], []
     for packet in packets_arr:
-        io_group = packet['io_group']
+        io_group = packet['io_group'] # counting from 1
 
         module_id = (io_group - 1) // nr_iogroup_module # counting from 0
         io_group = io_group - module_id * nr_iogroup_module
         
-        xyz = geom_dict[io_group, packet['io_channel'], packet['chip_id'], packet['channel_id']]
+        if modvar:
+            xyz = geom_dict[geom_dict_idx[module_id]][io_group, packet['io_channel'], packet['chip_id'], packet['channel_id']]
+        else:
+            xyz = geom_dict[io_group, packet['io_channel'], packet['chip_id'], packet['channel_id']]
         
         # Note tpc_centers is ordered by z, y, x, as in larnd-sim config files
         x_offset = tpc_centers[module_id][2]*10

@@ -63,7 +63,7 @@ def get_run_config(run_config_path, use_builtin = False):
     return run_config
 
 def configuration_keywords():
-    return ['module0','2x2', '2x2_only', '2x2_MR4', '2x2_MR45', 'ndlar']
+    return ['module0','2x2', '2x2_mod2mod_variation', '2x2_MR3', '2x2_MR4', 'ndlar']
 
 def detector_configuration(detector):
 
@@ -76,7 +76,7 @@ def detector_configuration(detector):
         run_config = get_run_config(run_config_path)
         geom_dict = load_geom_dict(geom_path)
 
-    elif detector == "2x2":
+    elif detector == "2x2_MR3":
         run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2.yaml')
         geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.3.16.pkl')
         run_config = get_run_config(run_config_path)
@@ -88,17 +88,19 @@ def detector_configuration(detector):
         run_config = get_run_config(run_config_path)
         geom_dict = load_geom_dict(geom_path)
 
-    elif detector == "2x2_MR45":
+    elif detector == "2x2":
         run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2_geo_v4.yaml')
         geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
         run_config = get_run_config(run_config_path)
         geom_dict = load_geom_dict(geom_path)
 
-    elif detector == "2x2_only":
-        run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2.yaml')
-        geom_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
+    elif detector == "2x2_mod2mod_variation":
+        run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/2x2_geo_v4.yaml')
+        geom_path_v2a = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.4.16.pkl')
+        geom_path_v2b = pkg_resources.resource_filename('LarpixParser', 'config_repo/dict_repo/multi_tile_layout-2.5.16.pkl')
         run_config = get_run_config(run_config_path)
-        geom_dict = load_geom_dict(geom_path)
+        geom_dict = [load_geom_dict(geom_path_v2a), load_geom_dict(geom_path_v2b)]
+        run_config['geom_dict_idx'] = [0,0,1,0]
 
     elif detector == "ndlar":
         run_config_path = pkg_resources.resource_filename('LarpixParser', 'config_repo/ndlar-module.yaml')

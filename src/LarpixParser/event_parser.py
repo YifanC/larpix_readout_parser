@@ -66,7 +66,7 @@ def get_t0_event(vertices, run_config, event_parser='event_id', time_parser='t_e
     return t0_ev
 
 
-def packet_to_eventid(assn, tracks, event_parser='event_id'):
+def packet_to_eventid(assn, tracks, event_parser='event_id', track_parser='segment_ids'):
     '''
     Assoiciate packet to event_id.
     
@@ -84,7 +84,7 @@ def packet_to_eventid(assn, tracks, event_parser='event_id'):
         array of event_id.
         `len(event_ids)` equals to `len(packets)`
     '''
-    track_ids = assn['track_ids'].max(axis=-1)
+    track_ids = assn[track_parser].max(axis=-1)
 
     event_ids = np.full_like(track_ids, -1, dtype=int)
     mask = track_ids != -1
