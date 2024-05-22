@@ -20,17 +20,20 @@ def get_calo_ke(packets_arr, run_config):
     packet_ke = packet_mV / run_config['GAIN']
     return packet_ke
 
-def get_calo_MeV(packets_arr, t_drift_arr, run_config):
+def get_calo_MeV(packets_arr, t_drift_arr, assn_arr, g4_seg, run_config):
     ## recombination require truth matching
     # W_ion [MeV/e]
     lifetime_red = Cali.lifetime(t_drift_arr, run_config) 
-    recomb = Cali.recombination(2, run_config)
+    dEdx = np.full(len(packets_arr), -1)
+    for i, seg_id in enumerate(assn_arr['segment_ids'][:, 0]):
+        dEdx[i] = g4_seg[g4_seg['segment_id']==seg_id]['dEdx']
+    recomb = Cali.recombination(2, dEdx, run_config)
     packet_MeV = get_calo_ke(packets_arr, run_config) * 1000 / recomb / lifetime_red * run_config['W_ion']
     return packet_MeV    
 
 def get_calo_true(packets_arr, assn, g4_seg):
-    contribution_mask = assn['track_ids'] == -1
-    track_id = np.ma.array(assn['track_ids'], mask = contribution_mask)
+    contribution_mask = assn['segment_ids'] == -1
+    track_id = np.ma.array(assn['segment_ids'], mask = contribution_mask)
     packet_charge_frac = np.ma.array(assn['fraction'], mask = contribution_mask)
     pdgcode = np.ma.array(g4_seg['pdg_id'][track_id], mask = contribution_mask)
     dE = np.ma.array(g4_seg['dE'][track_id], mask = contribution_mask)

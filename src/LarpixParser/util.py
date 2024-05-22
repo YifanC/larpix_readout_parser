@@ -18,6 +18,14 @@ def get_data_packets(packets):
 
     return packets_arr
 
+def get_data_packets_assn(packets, assn):
+
+    mask = packets['packet_type'] == 0
+    packets_arr = packets[mask]
+    assn_arr = assn[mask]
+
+    return packets_arr, assn_arr
+
 def get_run_config(run_config_path, use_builtin = False):
 
     run_config = {}

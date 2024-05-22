@@ -31,15 +31,15 @@ def hit_parser_charge(t0, packets, geom_dict, run_config, switch_xz=True, **kwar
 
     return x, y, z, dQ
 
-def hit_parser_energy(t0, packets, geom_dict, run_config, switch_xz=True, **kwargs):
+def hit_parser_energy(t0, packets, geom_dict, run_config, assn, g4_seg, switch_xz=True, **kwargs):
 
-    packets_arr = util.get_data_packets(packets)
+    packets_arr, assn_arr = util.get_data_packets_assn(packets, assn)
 
     x, y, z, t_drift_arr = hit_parser_position(t0, packets,
                                                geom_dict, run_config,
                                                switch_xz, **kwargs)
 
-    dE = GetCharge.get_calo_MeV(packets_arr, t_drift_arr, run_config)
+    dE = GetCharge.get_calo_MeV(packets_arr, t_drift_arr, assn_arr, g4_seg, run_config)
 
     return x, y, z, dE
 

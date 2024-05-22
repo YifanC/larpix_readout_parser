@@ -1,7 +1,7 @@
 import numpy as np
 
-def recombination(mode, run_config):
-    dEdx = 2 # MeV/cm, truth match per pixel
+def recombination(mode, dEdx, run_config):
+    #dEdx = 2 # MeV/cm, truth match per pixel
 
     # box
     if mode == 1:
