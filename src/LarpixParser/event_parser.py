@@ -93,3 +93,5 @@ def packet_to_eventid(assn, tracks, event_parser='event_id', track_parser='segme
         
     return event_ids
 
+def packet_to_eventid(assn):
+    return np.ndarray.flatten(assn['event_ids'])
